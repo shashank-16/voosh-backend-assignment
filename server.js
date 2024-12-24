@@ -33,9 +33,9 @@ app.use('/', authRoute);
 app.use('/users', userRoute);
 
 
-app.get('/', (req, res) => {
-    res.status(200).send("This Api endpoint's call are used for voosh assignment");
-});
+// app.get('/', (req, res) => {
+//     res.status(200).send("This Api endpoint's call are used for voosh assignment");
+// });
 
 
 app.listen(port, console.log("server is started"));

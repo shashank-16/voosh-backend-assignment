@@ -1,11 +1,10 @@
-const pgp = require('pg-promise');
 
-const con = {
-    host: "localhost",
-    user: "postgres",
-    port: 5432,
-    password: "mummy",
-    database: "vooshMusicDB"
-};
+const promise = require('bluebird');
+const pgp = require('pg-promise')({
+    promiseLib: promise
+});
 
-const db = pgp(con);
+const connectionString = 'postgres://postgres:mummy@localhost:5432/vooshMusicDB';
+const db = pgp(connectionString);
+
+module.exports = { db };
