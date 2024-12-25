@@ -17,7 +17,7 @@ const authToken = (req, res, next) => {
         req.email = email;
         next();
     })
-}
+};
 
 const roleAuthToken = (req, res, next) => {
     const authHeader = req.headers["authorization"]
@@ -34,7 +34,6 @@ const roleAuthToken = (req, res, next) => {
             "error": null
         })
         if (data.role == 'Admin') {
-
             next();
         }
     })
