@@ -3,15 +3,25 @@ const jwt = require('jsonwebtoken');
 
 const { db } = require('../../database/postgresqlCon');
 
-const bcrypt = require('bcrypt');
 
 const login = async (req, res) => {
     try {
-        const data = await db.one(`select email,password from user_table where password = '${req.body.password}'`).then((result, err) => {
-            if (err) return res.send("Wrong password");
+        let body = req.body;
+        if (body.email === undefined || body.password === undefined) {
+            let missingField = body.email === undefined ? 'email' : 'Password';
+            return res.status(400).json({
+                "status": 400,
+                "data": null,
+                "message": `Bad Request, Reason:${missingField} is missing.`,
+                "error": null
+            });
+        }
+        const data = await db.one(`select email,password,role from user_table where email = '${body.email}' AND  password = '${body.password}'`).then((result) => {
             if (result) {
-                const accessToken = jwt.sign(req.body.email, process.env.jwtToken);
-                res.json({
+                const accessToken = jwt.sign(body.email, process.env.jwtToken);
+                const authData = db.none(`insert into authtable(authToken ,role)` + `values( '${accessToken}' , '${result.role}' )`, req.body).then(() => { });
+
+                res.status(200).json({
                     "status": 200,
                     "data": {
                         "token": accessToken
@@ -20,17 +30,16 @@ const login = async (req, res) => {
                     "error": null
                 })
             }
-        }); // implement the query for login.
-        // if (!data) return res.status().json({});
-        // if (!req.body.password) return res.status().json({});// enter the password;
-
-
-        //     if (!result) return res.send({ errMsg: "Please enter correct password" });
-        //    
-        // });
-
+        });
     } catch (e) {
-        res.send("error")
+        if (e.received === 0) {
+            return res.status(404).json({
+                "status": 404,
+                "data": null,
+                "message": "User not found.",
+                "error": null
+            });
+        }
     }
 
 }
