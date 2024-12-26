@@ -4,7 +4,7 @@ const pgp = require('pg-promise')({
     promiseLib: promise
 });
 
-const connectionString = 'postgres://postgres:mummy@localhost:5432/vooshMusicDB';
+const connectionString = process.env.CONNECTION_DB;
 const db = pgp(connectionString);
 
 module.exports = { db };

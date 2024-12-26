@@ -2,9 +2,11 @@ const express = require('express');
 const router = express.Router();
 
 const login = require("../controller/authController/login");
-const { userSignUp } = require('../controller/authController/authSerivce');
+const { userSignUp, logout } = require('../controller/authController/authSerivce');
 
-router.route('/Logout').get(); // to do
+const { authToken } = require('../../middleware/authToken');
+
+router.route('/Logout').get(authToken, logout); // to do
 router.route('/signup').post(userSignUp);
 router.route('/login').post(login);
 

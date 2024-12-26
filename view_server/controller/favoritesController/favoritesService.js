@@ -1,69 +1,86 @@
 const { db } = require('../../database/postgresqlCon');
 
-const getFavorites = async (req, res) => {
+const getFavorite = async (req, res) => {
     if (req.query?.limit) {
 
-        let query = `SELECT favorite_table.favorite_id,
-        favorite_table.category,
-        '${req.query.category}'_table.'${req.query.category}'_id as item_id,
-        '${req.query.category}'_table.name as name , 
-        favorite_table.created_at 
-        FROM favorite_table 
-        INNER JOIN '${req.query.category}'_table
-        ON favorite_table.album_id = '${req.query.category}'_table.'${req.query.category}'_id
-        WHERE category = '${req.query.category}'
-        limit '${req.query.limit}' offest '${req.query.offset}';`;
+        let query = `SELECT favorites_table.favorite_id,
+        favorites_table.category,
+        ${req.params.category}_table.${req.params.category}_id as item_id,
+        ${req.params.category}_table.name as name , 
+        favorites_table.created_at 
+        FROM favorites_table 
+        INNER JOIN ${req.params.category}_table
+        ON favorites_table.${req.params.category}_id = ${req.params.category}_table.${req.params.category}_id
+        WHERE category = '${req.params.category}'
+        limit ${req.query.limit} offset ${req.query.offset};`;
 
         db.any(query).then((data) => {
-            res.status(200).json({
-                "status": 200,
-                "data": data,
-                "message": "Favorites retrieved successfully.",
+            if (data[0] == null) res.status(404).json({
+                "status": 404,
+                "data": null,
+                "message": "Resource Doesn't Exist",
                 "error": null
-            });
+            })
+            else {
+
+
+                res.status(200).json({
+                    "status": 200,
+                    "data": data.length > 1 ? data : data[0],
+                    "message": "Favorites retrieved successfully.",
+                    "error": null
+                });
+            }
         }).catch((error) => {
+
             res.status(400).json({
                 "status": 400,
                 "data": null,
                 "message": "Bad Request",
-                "error": error
+                "error": null
             });
         });
     } else {
-        let query = `SELECT favorite_table.favorite_id,
-        favorite_table.category,
-        '${req.query.category}'_table.'${req.query.category}'_id as item_id,
-        '${req.query.category}'_table.name as name , 
-        favorite_table.created_at 
-        FROM favorite_table 
-        INNER JOIN '${req.query.category}'_table
-        ON favorite_table.album_id = '${req.query.category}'_table.'${req.query.category}'_id
-        WHERE category = '${req.query.category}';`;
+        let query = `SELECT favorites_table.favorite_id,
+        favorites_table.category,
+        ${req.params.category}_table.${req.params.category}_id as item_id,
+        ${req.params.category}_table.name as name , 
+        favorites_table.created_at 
+        FROM favorites_table 
+        INNER JOIN ${req.params.category}_table
+        ON favorites_table.${req.params.category}_id = ${req.params.category}_table.${req.params.category}_id
+        WHERE category = '${req.params.category}';`;
 
         db.any(query).then((data) => {
+            if (data[0] == null) res.status(404).json({
+                "status": 404,
+                "data": null,
+                "message": "Resource Doesn't Exist",
+                "error": null
+            });
+
             res.status(200).json({
                 "status": 200,
-                "data": data,
+                "data": data.length > 1 ? data : data[0],
                 "message": "Favorites retrieved successfully.",
                 "error": null
             });
         }).catch((error) => {
+            console.log(error)
             res.status(400).json({
                 "status": 400,
                 "data": null,
                 "message": "Bad Request",
-                "error": error
+                "error": null
             });
         });
     }
 }
 
-
-
 const addFavorite = async (req, res) => {
     let item = req.body.category;
 
-    let query = `INSERT INTO favorite_table (category,${item}_id ) VALUES ($1, $2);`;
+    let query = `INSERT INTO favorites_table (category,${item}_id ) VALUES ($1, $2);`;
     let queryArray = [req.body.category, req.body.item_id];
     db.one(query, queryArray).then((data) => {
         res.status(200).json({
@@ -73,23 +90,24 @@ const addFavorite = async (req, res) => {
             "error": null
         });
     }).catch((error) => {
+        console.log(error);
         res.status(400).json({
             "status": 400,
             "data": null,
             "message": "Bad Request",
-            "error": error
+            "error": null
         });
     });
 }
 
 const deleteFavorite = async (req, res) => {
-    let query = `DELETE FROM favorite_table WHERE favorite_id = ${req.params.favorite_id};`;
+    let query = `DELETE FROM favorites_table WHERE favorite_id = '${req.params.favorite_id}';`;
     db.oneOrNone(query).then((data) => {
         if (data) res.status(404).json({
             "status": 404,
             "data": null,
             "message": "Resource Doesn't Exist",
-            "error": error
+            "error": null
         });
         res.status(200).json({
             "status": 200,
@@ -103,13 +121,13 @@ const deleteFavorite = async (req, res) => {
             "status": 400,
             "data": null,
             "message": "Bad Request",
-            "error": error
+            "error": null
         });
     });
 }
 
-module.export = {
-    getFavorites,
-    addFavorite,
-    deleteFavorite
+module.exports = {
+    getFavorite: getFavorite,
+    addFavorite: addFavorite,
+    deleteFavorite: deleteFavorite
 }

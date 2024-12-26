@@ -2,8 +2,6 @@ const { db } = require('../../database/postgresqlCon');
 
 const getAlbums = async (req, res) => {
     if (req.query?.artist_id) {
-
-
         db.any(`SELECT album_table.album_id,artist_table.name as artist_name , album_table.name, album_table.year, album_table.hidden 
 FROM album_table 
 INNER JOIN artist_table

@@ -3,7 +3,6 @@ const jwt = require('jsonwebtoken');
 
 const { db } = require('../../database/postgresqlCon');
 
-
 const login = async (req, res) => {
     try {
         let body = req.body;
@@ -19,7 +18,7 @@ const login = async (req, res) => {
         const data = await db.one(`select email,password,role from user_table where email = '${body.email}' AND  password = '${body.password}'`).then((result) => {
             if (result) {
                 const accessToken = jwt.sign(body.email, process.env.jwtToken);
-                const authData = db.none(`insert into authtable(authToken ,role)` + `values( '${accessToken}' , '${result.role}' )`, req.body).then(() => { });
+                const authData = db.none(`insert into authtable(authToken ,role)` + `values( '${body.email}' , '${result.role}' )`, req.body).then(() => { });
 
                 res.status(200).json({
                     "status": 200,
@@ -43,5 +42,7 @@ const login = async (req, res) => {
     }
 
 }
+
+
 
 module.exports = login;

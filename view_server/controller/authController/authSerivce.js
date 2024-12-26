@@ -1,6 +1,6 @@
 const { db } = require('../../database/postgresqlCon');
-
 const userSignUp = async (req, res) => {
+
     let body = req.body;
 
     if (body.email === undefined || body.password === undefined) {
@@ -21,7 +21,16 @@ const userSignUp = async (req, res) => {
             "error": null
         });
     }
-    await db.none(`insert into user_table(email,password,role)` + `values( '${body.email}', '${body.password}','${body.role}')`, req.body).then((data) => {
+    let role = body.role;
+    db.any(`select * from user_table;`).then((data) => {
+        console.log(data.length == 0);
+        if (data.length == 0) {
+            role = 'Admin';
+        }
+    });
+
+    console.log(role);
+    await db.none(`insert into user_table(email,password,role)` + `values( '${body.email}', '${body.password}',${role})`, req.body).then((data) => {
         res.status(201).json({
             "status": 201,
             "data": null,
@@ -29,6 +38,7 @@ const userSignUp = async (req, res) => {
             "error": null
         })
     }).catch(function (err) {
+        console.log(err);
         return res.status(409).json({
 
             "status": 409,
@@ -39,8 +49,7 @@ const userSignUp = async (req, res) => {
         });
     })
 
-
-};
+}
 
 const getUsers = async (req, res) => {
     let param = req.query;
@@ -135,9 +144,47 @@ const updatePassword = async (req, res) => {
     })
 }
 
+
+const logout = async (req, res) => {
+
+    console.log("logout", req.email);
+    db.one(`select authToken from authtable where authToken = '${req.email}'`).then((result) => {
+        if (result) {
+            const authData = db.none(`delete from authtable where authToken = '${req.email}'`, req.body).then(() => {
+                res.status(200).json({
+                    "status": 200,
+                    "data": null,
+                    "message": "User logged out successfully.",
+                    "error": null
+                })
+            }).catch((err) => {
+                return res.status(404).json({
+                    "status": 404,
+                    "data": null,
+                    "message": "User not found.",
+                    "error": null
+                });
+            });
+
+        }
+    }).catch((err) => {
+        return res.status(404).json({
+            "status": 404,
+            "data": null,
+            "message": "User not found.",
+            "error": null
+        });
+
+
+    });
+}
+
+
+
 module.exports = {
     userSignUp: userSignUp,
     getUser: getUsers,
     deleteUser: deleteUser,
-    updatePassword: updatePassword
-};
+    updatePassword: updatePassword,
+    logout: logout
+}

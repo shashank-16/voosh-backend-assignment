@@ -1,7 +1,6 @@
 
 require('dotenv').config({ path: './config/dev.env' })
 
-const { Client } = require('pg');
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
@@ -41,9 +40,9 @@ app.use('/favorites', favoritesRoute);
 
 
 
-// app.get('/', (req, res) => {
-//     res.status(200).send("This Api endpoint's call are used for voosh assignment");
-// });
+app.get('/', (req, res) => {
+    res.status(200).send("This Api endpoint's call are used for voosh assignment");
+});
 
 
 app.listen(port, console.log("server is started"));
