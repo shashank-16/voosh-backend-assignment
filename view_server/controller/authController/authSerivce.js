@@ -21,16 +21,14 @@ const userSignUp = async (req, res) => {
             "error": null
         });
     }
-    let role = body.role;
-    db.any(`select * from user_table;`).then((data) => {
-        console.log(data.length == 0);
+    var role = body.role;
+    await db.any(`select * from user_table;`).then((data) => {
         if (data.length == 0) {
-            role = 'Admin';
+            role = "Admin";
         }
     });
 
-    console.log(role);
-    await db.none(`insert into user_table(email,password,role)` + `values( '${body.email}', '${body.password}',${role})`, req.body).then((data) => {
+    await db.none(`insert into user_table(email,password,role)` + `values( '${body.email}', '${body.password}','${role}')`, req.body).then((data) => {
         res.status(201).json({
             "status": 201,
             "data": null,

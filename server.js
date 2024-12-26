@@ -32,7 +32,7 @@ app.use(cors(corsOption));
 
 
 app.use('/api/v1', authRoute);
-app.use('api/v1/users', userRoute);
+app.use('/api/v1/users', userRoute);
 app.use('/api/v1/artists', artistRoute);
 app.use('/api/v1/albums', albumRoute);
 app.use('/api/v1/tracks', trackRoute);
@@ -46,3 +46,4 @@ app.get('/api/v1/', (req, res) => {
 
 
 app.listen(port, console.log("server is started"));
+
