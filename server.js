@@ -31,16 +31,16 @@ app.use(express.json());
 app.use(cors(corsOption));
 
 
-app.use('/', authRoute);
-app.use('/users', userRoute);
-app.use('/artists', artistRoute);
-app.use('/albums', albumRoute);
-app.use('/tracks', trackRoute);
-app.use('/favorites', favoritesRoute);
+app.use('/api/v1', authRoute);
+app.use('api/v1/users', userRoute);
+app.use('/api/v1/artists', artistRoute);
+app.use('/api/v1/albums', albumRoute);
+app.use('/api/v1/tracks', trackRoute);
+app.use('/api/v1/favorites', favoritesRoute);
 
 
 
-app.get('/', (req, res) => {
+app.get('/api/v1/', (req, res) => {
     res.status(200).send("This Api endpoint's call are used for voosh assignment");
 });
 
