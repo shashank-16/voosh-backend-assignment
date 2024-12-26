@@ -14,6 +14,7 @@ const userRoute = require('./view_server/routes/users/usersRoute');
 const artistRoute = require('./view_server/routes/artists/artistRoute');
 const albumRoute = require('./view_server/routes/albums/albumRoute');
 const trackRoute = require('./view_server/routes/tracks/trackRoute');
+const favoritesRoute = require('./view_server/routes/favorites/favoritesRoute');
 
 const corsOption = {
     origin: '*',
@@ -36,6 +37,7 @@ app.use('/users', userRoute);
 app.use('/artists', artistRoute);
 app.use('/albums', albumRoute);
 app.use('/tracks', trackRoute);
+app.use('/favorites', favoritesRoute);
 
 
 
