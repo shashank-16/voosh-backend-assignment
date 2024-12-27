@@ -24,7 +24,6 @@ app.set('view engine', 'ejs');
 app.use(express.static('uploads'));
 
 
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ urlencoded: false }));
 app.use(express.json());
@@ -41,7 +40,7 @@ app.use('/api/v1/favorites', favoritesRoute);
 
 
 app.get('/api/v1/', (req, res) => {
-    res.status(200).send("This Api endpoint's call are used for voosh assignment");
+    res.status(200).send("This Api endpoint's for voosh assignment");
 });
 
 

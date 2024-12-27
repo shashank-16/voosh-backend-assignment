@@ -13,7 +13,7 @@ const userSignUp = async (req, res) => {
         });
     }
 
-    if (body.role == 'Admin') {
+    if (body?.role == 'Admin') {
         return res.status(400).json({
             "status": 400,
             "data": null,
@@ -36,9 +36,15 @@ const userSignUp = async (req, res) => {
             "error": null
         })
     }).catch(function (err) {
-        console.log(err);
+        if (role === undefined) {
+            return res.status(400).json({
+                "status": 400,
+                "data": null,
+                "message": `Bad Request, Reason:Role is missing.`,
+                "error": null
+            });
+        }
         return res.status(409).json({
-
             "status": 409,
             "data": null,
             "message": "Email already exists.",
